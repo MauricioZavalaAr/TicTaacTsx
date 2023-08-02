@@ -8,7 +8,7 @@
 // const Square: React.FC<SquareProps> = ({ value, onSquareClick }) => {
 //   return (
 //     <button className="square" onClick={onSquareClick}>
-//       {value}
+//       {value || "."}
 //     </button>
 //   );
 // };
@@ -20,17 +20,32 @@
 
 
 ///////////// -----------------------
+
 import React from 'react';
+import SquareValue from './types';
 
 interface SquareProps {
-  value: string | null;
+  value: SquareValue;
   onSquareClick: () => void;
 }
 
 const Square: React.FC<SquareProps> = ({ value, onSquareClick }) => {
+  let displayValue: string | JSX.Element = '';
+
+  if (Array.isArray(value)) {
+    displayValue = value.map((icon, index) => (
+      <span key={index}>
+        {icon}
+        {index < value.length - 1 && ' '}
+      </span>
+    ));
+  } else {
+    displayValue = value.toString();
+  }
+
   return (
     <button className="square" onClick={onSquareClick}>
-      {value}
+      {displayValue}
     </button>
   );
 };
