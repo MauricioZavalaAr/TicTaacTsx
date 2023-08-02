@@ -1,16 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
-import TicTsx from './Components/TicTsx'
+import React from 'react';
+import Game from './Components/Game';
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="App">
-      <TicTsx/>
+    <div>
+      Get 3 in a row to win!
+      <Game/>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
