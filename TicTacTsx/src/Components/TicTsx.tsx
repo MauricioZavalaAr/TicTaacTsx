@@ -63,61 +63,74 @@
 
 ////////////////////////////----------------------
 // ///////////// ------------------
-import React from 'react';
-import { calculateWinner } from './calculateWinner';
+import React, { useState } from "react";
+import { getRandomMove } from "./GameLogic";
+import { calculateWinner } from "./calculateWinner";
 
-import Square from './Square';
-import SquareValue from './types';
 
-interface BoardProps {
-  xIsNext: boolean;
-  squares: SquareValue[];
-  onPlay: (nextSquares: SquareValue[]) => void;
-  playerIcons: { [key: string]: JSX.Element | null };
-}
+type Props = {
+  userIcon: string;
+};
 
-const Board: React.FC<BoardProps> = ({ xIsNext, squares, onPlay, playerIcons }) => {
-  function handleClick(i: number) {
-    if (calculateWinner(squares) || squares[i]) {
-      return;
+const Board: React.FC<Props> = ({ userIcon }) => {
+  const [board, setBoard] = useState(Array(16).fill(""));
+  const [isUserTurn, setIsUserTurn] = useState(true);
+  const winner = calculateWinner(board);
+
+  const handleCellClick = (index: number) => {
+    if (board[index] === "" && !winner && isUserTurn) {
+      const newBoard = [...board];
+      newBoard[index] = userIcon;
+      setBoard(newBoard);
+      setIsUserTurn(false);
+      setTimeout(() => makePCTurn(newBoard), 500); // Wait a bit before PC move
     }
+  };
 
-    const nextSquares = squares.slice();
-    nextSquares[i] = xIsNext ? (playerIcons.playerX || '') : (playerIcons.playerO || '');
-    onPlay(nextSquares);
-  }
+  const makePCTurn = (currentBoard: string[]) => {
+    if (!winner && !isUserTurn) {
+      const pcIcon = userIcon === "X" ? "O" : "X"; // Use the opposite icon of the user
+      const randomMove = getRandomMove(currentBoard);
+      const newBoard = [...currentBoard];
+      newBoard[randomMove] = pcIcon;
+      setBoard(newBoard);
+      setIsUserTurn(true);
+    }
+  };
 
-  const renderSquare = (i: number) => {
-    return <Square value={squares[i]} onSquareClick={() => handleClick(i)} />;
+  const renderCells = () => {
+    return board.map((value, index) => (
+      <button key={index} onClick={() => handleCellClick(index)}>
+        {value}
+      </button>
+    ));
+  };
+
+  const renderStatusMessage = () => {
+    if (winner) {
+      return `Winner: ${winner}`;
+    } else if (board.every((cell) => cell !== "")) {
+      return "It's a draw!";
+    } else {
+      return isUserTurn ? "Your turn" : "PC's turn";
+    }
+  };
+
+  const handleResetGame = () => {
+    setBoard(Array(16).fill(""));
+    setIsUserTurn(true);
   };
 
   return (
-    <>
-      <div className="board-row">
-        {renderSquare(0)}
-        {renderSquare(1)}
-        {renderSquare(2)}
-        {renderSquare(3)}
+    <div>
+      <div className="board">
+        {renderCells()}
       </div>
-      <div className="board-row">
-        {renderSquare(4)}
-        {renderSquare(5)}
-        {renderSquare(6)}
-        {renderSquare(7)}
+      <div className="status">
+        {renderStatusMessage()}
       </div>
-      <div className="board-row">
-        {renderSquare(8)}
-        {renderSquare(9)}
-        {renderSquare(10)}
-        {renderSquare(11)}
-      </div>
-      <div className="board-row">
-        {renderSquare(12)}
-        {renderSquare(13)}
-        {renderSquare(14)}
-        {renderSquare(15)}
-      </div>
-    </>
+      <button onClick={handleResetGame}>Reset Game</button>
+    </div>
   );
 };
 

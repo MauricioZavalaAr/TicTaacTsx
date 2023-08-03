@@ -47,8 +47,9 @@ import React, { useState } from 'react';
 
 import { calculateWinner } from './calculateWinner';
 import SquareValue from './types';
-import Board from './TicTsx';
+
 import PlayerSelection from './playerSelection';
+import Board from './TicTsx';
 
 
 export default function Game() {
