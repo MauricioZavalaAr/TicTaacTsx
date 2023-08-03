@@ -1,22 +1,14 @@
-import React, { useState } from "react";
-import Board from "./components/TicTsx";
+import React from 'react';
+import Game from './Components/Game';
 
-const App: React.FC = () => {
-  const [userIcon, setUserIcon] = useState("X"); // Default icon for the user
 
-  const handleIconSelect = (selectedIcon: string) => {
-    setUserIcon(selectedIcon);
-  };
-
+function App() {
   return (
     <div>
-      <h1>Tic Tac Toe</h1>
-      <h3>Select your icon:</h3>
-      <button onClick={() => handleIconSelect("X")}>X</button>
-      <button onClick={() => handleIconSelect("O")}>O</button>
-      <Board userIcon={userIcon} />
+      Get 3 in a row to win!
+      <Game/>
     </div>
   );
-};
+}
 
 export default App;
