@@ -20,7 +20,6 @@
 
 
 ///////////// -----------------------
-
 import React from 'react';
 import SquareValue from './types';
 

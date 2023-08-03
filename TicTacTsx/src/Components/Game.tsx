@@ -44,22 +44,24 @@
 
 ///////////////////////////---------------------------------
 import React, { useState } from 'react';
+
+import { calculateWinner } from './calculateWinner';
 import SquareValue from './types';
-import PlayerSelection from './playerSelection';
 import Board from './TicTsx';
+import PlayerSelection from './playerSelection';
 
 
-interface GameProps {
-  playerIcons: { [key: string]: JSX.Element | null };
-}
-
-const Game: React.FC<GameProps> = ({ playerIcons }) => {
+export default function Game() {
   const [history, setHistory] = useState([Array(16).fill('')]);
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove];
+  const currentSquares = history[currentMove] as SquareValue[]; // <-- Add this type assertion
 
-  const [selectedPlayerIcons, setSelectedPlayerIcons] = useState({ playerX: null, playerO: null });
+
+  const [playerIcons, setPlayerIcons] = useState({
+    playerX: null,
+    playerO: null,
+  });
 
   function handlePlay(nextSquares: SquareValue[]) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -67,35 +69,28 @@ const Game: React.FC<GameProps> = ({ playerIcons }) => {
     setCurrentMove(nextHistory.length - 1);
   }
 
-  function handleIconSelect(icon: JSX.Element) {
-    setSelectedPlayerIcons((prevIcons) => {
-      return {
-        ...prevIcons,
-        [xIsNext ? 'playerX' : 'playerO']: icon,
-      };
-    });
+  function handleIconSelect(icon: JSX.Element, player: 'playerX' | 'playerO') {
+    setPlayerIcons((prevIcons) => ({
+      ...prevIcons,
+      [player]: icon,
+    }));
   }
 
-  const moves = history.map((_, move) => {
-    const description = move > 0 ? 'Go to move #' + move : 'Go to game start';
-    return (
-      <li key={move}>
-        <button onClick={() => setCurrentMove(move)}>{description}</button>
-      </li>
-    );
+  const moves = history.map((squares, move) => {
+    // ...
   });
 
   return (
     <div className="game">
-      <PlayerSelection onSelect={handleIconSelect} />
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} playerIcons={selectedPlayerIcons} />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} playerIcons={playerIcons} />
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
       </div>
+      <div className="player-selection">
+        <PlayerSelection onSelect={handleIconSelect} />
+      </div>
     </div>
   );
-};
-
-export default Game;
+}

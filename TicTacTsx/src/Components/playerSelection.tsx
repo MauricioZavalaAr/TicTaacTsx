@@ -1,26 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaUser, FaUserSecret, FaUserTie } from 'react-icons/fa';
 
 interface PlayerSelectionProps {
-  onSelect: (icon: JSX.Element) => void;
+  onSelect: (icon: JSX.Element, player: 'playerX' | 'playerO') => void;
 }
 
 const PlayerSelection: React.FC<PlayerSelectionProps> = ({ onSelect }) => {
+  const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null);
+
+  const handleIconSelect = (icon: JSX.Element) => {
+    setSelectedIcon(icon);
+    onSelect(icon, selectedIcon === null ? 'playerX' : 'playerO');
+  };
+
   return (
-    <div className="player-selection">
-      <h2>Select an icon for the player:</h2>
-      <div className="icon-container">
-        <button onClick={() => onSelect(<FaUser />)}>
-          <FaUser />
-        </button>
-        <button onClick={() => onSelect(<FaUserSecret />)}>
-          <FaUserSecret />
-        </button>
-        <button onClick={() => onSelect(<FaUserTie />)}>
-          <FaUserTie />
-        </button>
-        {/* Add more buttons with other icons */}
-      </div>
+    <div>
+      <h3>Select Player Icons:</h3>
+      <button onClick={() => handleIconSelect(<FaUser />)}>
+        <FaUser />
+      </button>
+      <button onClick={() => handleIconSelect(<FaUserSecret />)}>
+        <FaUserSecret />
+      </button>
+      <button onClick={() => handleIconSelect(<FaUserTie />)}>
+        <FaUserTie />
+      </button>
     </div>
   );
 };
